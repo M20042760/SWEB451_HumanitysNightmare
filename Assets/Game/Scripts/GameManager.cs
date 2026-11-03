@@ -12,7 +12,10 @@ public class GameManager : MonoBehaviour
     private bool detected;
     private bool recharging;
     private bool hidden;
+    private bool rewiring;
     private bool gameOver;
+    private bool betaCompleted;
+    private string rewiringMessage;
 
     public bool IsHidden => hidden;
 
@@ -24,7 +27,7 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        if (gameOver)
+        if (gameOver || betaCompleted)
         {
             return;
         }
@@ -65,6 +68,19 @@ public class GameManager : MonoBehaviour
         RefreshUI();
     }
 
+    public void SetRewiringStatus(string message, bool active)
+    {
+        rewiringMessage = message;
+        rewiring = active;
+        RefreshUI();
+    }
+
+    public void CompleteBeta()
+    {
+        betaCompleted = true;
+        RefreshUI();
+    }
+
     public void Recharge(float amount)
     {
         battery = Mathf.Min(maxBattery, battery + amount);
@@ -87,6 +103,10 @@ public class GameManager : MonoBehaviour
         {
             statusText.text = "SYSTEM SHUTDOWN - Battery depleted";
         }
+        else if (betaCompleted)
+        {
+            statusText.text = "BETA COMPLETE - AI reprogrammed!";
+        }
         else if (detected)
         {
             statusText.text = "DETECTED! Leave the red vision area.";
@@ -98,6 +118,10 @@ public class GameManager : MonoBehaviour
         else if (recharging)
         {
             statusText.text = "RECHARGING...";
+        }
+        else if (rewiring)
+        {
+            statusText.text = rewiringMessage;
         }
         else
         {
