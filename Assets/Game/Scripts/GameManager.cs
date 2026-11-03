@@ -10,7 +10,11 @@ public class GameManager : MonoBehaviour
 
     private float battery;
     private bool detected;
+    private bool recharging;
+    private bool hidden;
     private bool gameOver;
+
+    public bool IsHidden => hidden;
 
     private void Awake()
     {
@@ -39,7 +43,25 @@ public class GameManager : MonoBehaviour
 
     public void SetDetected(bool value)
     {
-        detected = value;
+        detected = hidden ? false : value;
+        RefreshUI();
+    }
+
+    public void SetRecharging(bool value)
+    {
+        recharging = value;
+        RefreshUI();
+    }
+
+    public void SetHidden(bool value)
+    {
+        hidden = value;
+
+        if (hidden)
+        {
+            detected = false;
+        }
+
         RefreshUI();
     }
 
@@ -68,6 +90,14 @@ public class GameManager : MonoBehaviour
         else if (detected)
         {
             statusText.text = "DETECTED! Leave the red vision area.";
+        }
+        else if (hidden)
+        {
+            statusText.text = "HIDDEN - Agent cannot detect you.";
+        }
+        else if (recharging)
+        {
+            statusText.text = "RECHARGING...";
         }
         else
         {
